@@ -1,0 +1,545 @@
+const express = require('express');
+
+//import controller 
+const blogController = require('./../controllers/blogController');
+const appConfig = require('../appConfig/appConfig');
+//middleware
+const auth = require('../middlewares/auth');
+
+let setRouter = (app) => {
+    let baseUrl = appConfig.apiVersion+'/blogs';
+   app.get(baseUrl+'/all',auth.isAuthenticated,blogController.getAllBlog);
+   
+   /**
+    * @api {get} /api/v1/blogs/all Get all blogs
+    * @apiVersion 0.0.1
+    * @apiGroup read
+    * 
+    * @apiParam {String} authToken The token for authentication. (Send authToken as query parameter, body parameter or as a header )
+    * 
+    * @apiSuccessExample {json} Success-Response:
+    * {
+     "error": false,
+     "message": "All Blog Details Found",
+     "status": 200,
+     "data":[
+               {
+                   blogId: "string",
+                   title: "string",
+                   description: "string",
+                   bodyHtml: "string",
+                   views: number,
+                   isPublished: boolean,
+                   category: "string",
+                   author: "string",
+                   tags: object(type = array),
+                   created: "date",
+                   lastModified: "date"                  
+               }        
+            ]
+        }
+    }
+    @apiErrorExample {json} Error-Response:
+    *
+    *{
+        "error":true,
+        "message": "Failed To Find Blog Details",
+        "status": 500,
+        "data": null
+      }
+    */
+   app.get(baseUrl+'/view/:blogId',auth.isAuthenticated,blogController.viewByBlogId);
+   /**
+    * @api {get} /api/v1/blogs/view/:blogId  Get a single blog
+    * @apiVersion 0.0.1
+    * @apiGroup read
+    * 
+    * @apiParam {String} authToken The token for authentication. (Send authToken as query parameter, body parameter or as a header )
+    * @apiParam {String} blogId The blogId should be passed as the URL parameter 
+    * 
+    * 
+    * @apiSuccessExample {json} Success-Response:
+    * {
+     "error": false,
+     "message": "Blog Found Successfully.",
+     "status": 200,
+     "data":   {
+                   _id: "string",
+                   __v: number,
+                   blogId: "string",
+                   title: "string",
+                   description: "string",
+                   bodyHtml: "string",
+                   views: number,
+                   isPublished: boolean,
+                   category: "string",
+                   author: "string",
+                   tags: object(type = array),
+                   created: "date",
+                   lastModified: "date"                  
+               }        
+            }
+        }
+    }
+    @apiErrorExample {json} Error-Response:
+    *
+    *{
+        "error":true,
+        "message": "Failed To Find Blog Details",
+        "status": 500,
+        "data": null
+      }
+    */
+    
+    app.get(baseUrl+'view/by/author/:author',auth.isAuthenticated,blogController.viewByAuthor);
+
+    /**
+    * @api {get} /api/v1/blogs/view/by/author/:author Get blogs by author
+    * @apiVersion 0.0.1
+    * @apiGroup read
+    * 
+    * @apiParam {String} authToken The token for authentication. (Send authToken as query parameter, body parameter or as a header )
+    * @apiParam {String} author author of the blog passed as the URL parameter
+    * 
+    * @apiSuccessExample {json} Success-Response:
+    * {
+     "error": false,
+     "message": "Blog Found Successfully.",
+     "status": 200,
+     "data":[
+               {
+                   blogId: "string",
+                   title: "string",
+                   description: "string",
+                   bodyHtml: "string",
+                   views: number,
+                   isPublished: boolean,
+                   category: "string",
+                   author: "string",
+                   tags: object(type = array),
+                   created: "date",
+                   lastModified: "date"                  
+               }        
+            ]
+        }
+    }
+    @apiErrorExample {json} Error-Response:
+    *
+    *{
+        "error":true,
+        "message": "Failed To Find Blog Details",
+        "status": 500,
+        "data": null
+      }
+    */
+
+    app.get(baseUrl+'view/by/category/:category',auth.isAuthenticated,blogController.viewByCategory);
+
+    /**
+    * @api {get} /api/v1/blogs/view/by/category/:category  Get blogs by category
+    * @apiVersion 0.0.1
+    * @apiGroup read
+    * 
+    * @apiParam {string} authToken The token for authentication. (Send authToken as query parameter, body parameter or as a header )
+    * @apiParam {string} category category of the blog passed as the URL parameter 
+    * 
+    * @apiSuccessExample {json} Success-Response:
+    * {
+     "error": false,
+     "message": "Blog Found Successfully.",
+     "status": 200,
+     "data":[
+               {
+                   blogId: "string",
+                   title: "string",
+                   description: "string",
+                   bodyHtml: "string",
+                   views: number,
+                   isPublished: boolean,
+                   category: "string",
+                   author: "string",
+                   tags: object(type = array),
+                   created: "date",
+                   lastModified: "date"                  
+               }        
+            ]
+        }
+    }
+    @apiErrorExample {json} Error-Response:
+    *
+    *{
+        "error":true,
+        "message": "Failed To Find Blog Details",
+        "status": 500,
+        "data": null
+      }
+    */
+    app.post(baseUrl+'/:blogId/delete',auth.isAuthenticated,blogController.deleteBlog);
+
+    /**
+     * @api {get} /api/v1/blogs/:blogId/delete  Delete blog by blogId
+     * @apiVersion 0.0.1
+     * @apiGroup delete
+     * 
+     * @apiParam {String} authToken The token for authentication. (Send authToken as query parameter, body parameter or as a header )
+     * @apiParam {String} blogId blogId of the blog passed as the URL parameter  
+     * 
+     * @apiSuccessExample {json} Success-Response:
+     * {
+        "error": false,
+        "message": "Blog Deleted Successfully",
+        "status": 200,
+        "data": []
+         }
+      }
+    }
+    @apiErrorExample {json} Error-Response:
+    *
+    *{
+        "error":true,
+        "message": "Error Occured.",
+        "status": 500,
+        "data": null
+      }
+    */
+    app.put(baseUrl+'/:blogId/edit',auth.isAuthenticated,blogController.editBlog);
+     /**
+      * @api {put} /api/v1/blogs/:blogId/edit Edit blog by blogId
+      * @apiVersion 0.0.1
+      * @apiGroup edit
+      * 
+      * @apiParam {String} authToken The token for authentication.(Send authToken as query parameter, body parameter or as a header)
+      * @apiParam {String} blogId blogId of the blog passed as the URL parameter 
+      * @apiSuccessExample {json} Success-Response:
+      * { 
+         "error":false,
+          "message": "Blog Edited Successfully",
+          "status" : 200,
+          "data":[
+                    {
+                        blogId:"String",
+                        title:"String",
+                        description:"String",
+                        bodyHtml:"String",
+                        views:number,
+                        isPublished:boolean,
+                        category: "String",
+                        author:"String",
+                        tags: object(type = array),
+                        created: "date",
+                        lastModified: "date"
+                    }
+                ]
+        }
+      *@apiErrorExample {json} Error-Response:
+      *{
+         "error": true,
+         "message": "Error-Occured.",
+         "status": 500,
+         "data":null
+        } 
+      */
+    app.post(baseUrl+'/create',auth.isAuthenticated,blogController.createBlog);
+
+    /**
+	 * @api {post} /api/v1/blogs/create Create blog
+	 * @apiVersion 0.0.1
+	 * @apiGroup create
+	 *
+	 * @apiParam {String} authToken The token for authentication.(Send authToken as query parameter, body parameter or as a header)
+	 * @apiParam {String} title title of the blog passed as a body parameter
+	 * @apiParam {String} description description of the blog passed as a body parameter
+	 * @apiParam {String} blogBody blogBody of the blog passed as a body parameter
+	 * @apiParam {String} category category of the blog passed as a body parameter
+	 *
+	 *  @apiSuccessExample {json} Success-Response:
+	 *  {
+	    "error": false,
+	    "message": "Blog Created successfully",
+	    "status": 200,
+	    "data": [
+					{
+						blogId: "string",
+						title: "string",
+						description: "string",
+						bodyHtml: "string",
+						views: number,
+						isPublished: boolean,
+						category: "string",
+						author: "string",
+						tags: object(type = array),
+						created: "date",
+						lastModified: "date"
+					}
+	    		]
+	    	}
+		}
+	}
+	  @apiErrorExample {json} Error-Response:
+	 *
+	 * {
+	    "error": true,
+	    "message": "Error Occured.,
+	    "status": 500,
+	    "data": null
+	   }
+	 */
+
+    app.get(baseUrl+'/:blogId/count/view',auth.isAuthenticated,blogController.increaseBlogView);
+    /**
+	 * @api {get} /api/v1/blogs/:blogId/count/view Increase Blogs Count
+	 * @apiVersion 0.0.1
+	 * @apiGroup update
+	 *
+	 * @apiParam {String} authToken The token for authentication.(Send authToken as query parameter, body parameter or as a header)
+	 * @apiParam {String} blogId blogId of the blog passed as the URL parameter
+	 *
+	 *  @apiSuccessExample {json} Success-Response:
+	 *  {
+	    "error": false,
+	    "message": "Blog Updated Successfully.",
+	    "status": 200,
+	    "data": [
+					{
+						blogId: "string",
+						title: "string",
+						description: "string",
+						bodyHtml: "string",
+						views: number,
+						isPublished: boolean,
+						category: "string",
+						author: "string",
+						tags: object(type = array),
+						created: "date",
+						lastModified: "date"
+					}
+	    		]
+	    	}
+		}
+	}
+	  @apiErrorExample {json} Error-Response:
+	 *
+	 * {
+	    "error": true,
+	    "message": "Error Occured.,
+	    "status": 500,
+	    "data": null
+	   }
+	 */
+
+
+}//end setRouter function
+
+module.exports = {
+    setRouter:setRouter
+}//end module export
+ */
+
+
+
+
+
+
+ ///////////////////////////////controller
+ const express = require('express');
+const mongoose = require('mongoose');
+//shortid generator
+const shortid = require('shortid');
+//response library
+const response = require('../libs/responsLib');
+//time library
+const time = require('../libs/timeLibs');
+//Importing isEmpty Library
+const check = require('../libs/checkLibs');
+// importing logger 
+const logger = require('../libs/loggerLib');
+//Importing the Blog Model
+const BlogModel = mongoose.model('Blog');
+
+
+
+
+
+let getAllBlog = (req, res) => {
+    BlogModel.find()
+        .select('-_V -_id')
+        .lean()
+        .exec((err, result) => {
+            if (err) {
+                console.log(err);
+                logger.error('Failed To Find the Blog Detains','BlogController:getAllBlog',10);
+                let apiResponse = response.generate(true,'Failed To Find Blog Details',500,null);
+                res.send(apiResponse);
+            } else if (result == undefined || result == null || result == '') {
+                console.log('No Blog Found');
+                logger.info('No Blog Found','BlogController:getAllBlogs',5);
+                let apiResponse = response.generate(true,'No Blog Found',404,null);
+                res.send(apiResponse);
+            } else {
+                logger.info('Blogs Found Successfully','BlogController:getAllBlog',1);
+                let apiResponse = response.generate(false,'All Blog Details Found',200,result);
+                res.send(apiResponse);
+            }
+        })
+
+}// End get all blogs
+
+let viewByBlogId = (req, res) => {
+    BlogModel.findOne({ 'blogId': req.params.blogId }, (err, result) => {
+        if (err) {
+            logger.error('Error Occured','BlogController:viewByBlogId',10)
+            let apiResponse = response.generate(true,'Error Occured',500,null);
+            res.send(apiResponse);
+        } else if (check.isEmpty(result)) {
+            logger.info('No Blog Found','BlogController:viewBlogId',5);
+            let apiResponse = response.generate(true,'Blog Not Found',404,null);
+            res.send(apiResponse);
+        } else {
+            logger.info('Blog Find Successful','BlogController:viewByBlogId',1);
+            let apiResponse = response.generate(false,'Blog Found Successfully',200,result);
+            res.send(apiResponse);
+        }
+    })
+}//End viewByBlogId
+
+let viewByAuthor = (req, res) => {
+    BlogModel.find({ 'author': req.params.author }, (err, result) => {
+        if (err) {
+            logger.error('Error Occured','BlogController:viewByAuthor',10);
+            let apiResponse = response.generate(true,'Error Occured',500,null);
+            res.send(apiResponse);
+        } else if (check.isEmpty(result)) {
+            logger.info('Blog Not Found','BlogController:viewByAuthor',5);
+            let apiResponse = response.generate(true,'Blog Not Found',404,null);
+            res.send(apiResponse);
+        } else {
+            logger.info('Blog Found Successfully','BlogController:viewByAuthor',1);
+            let apiResponse = response.generate(false,'Blog Found Successfully',200,result);
+            res.send(apiResponse);
+        }
+    })
+}// End viewByAuthor
+
+let viewByCategory = (req, res) => {
+    BlogModel.find({ 'category': req.params.category }, (err, result) => {
+        if (err) {
+            logger.error(err,'BlogController:viewByCategory',10);
+            let apiResponse = response.generate(true,'Error Occured',500,null);
+            res.send(apiResponse);
+        } else if (check.isEmpty(result)) {
+            logger.info('Blog Not Found','BlogController:viewByCategory',5);
+            let apiResponse = response.generate(true,'Blog Not Found',404,null);
+            res.send(apiResponse);
+        } else {
+            logger.info('Blog found Successfully','BlogController:viewByCategory',1);
+            let apiResponse = response.generate(false,'Blog Found Successfully',200,result);
+            res.send(apiResponse);
+        }
+    })
+}//End viewByAuthor 
+
+let createBlog = (req, res) => {
+    let blogId = shortid.generate();
+    let newBlog = new BlogModel({
+        blogId: blogId,
+        title: req.body.title,
+        description: req.body.description,
+        bodyHtml: req.body.blogBody,
+        isPublished: true,
+        category: req.body.category,
+        author: req.body.fullName,
+        created: time.convertToLocalTime(time.now()), 
+        lastModified: time.convertToLocalTime(time.now())
+    })//End newBlog Model
+    let tags = (req.body.tags != undefined && req.body.tags != null && req.body.tags != '') ? req.body.tags.slice(',') : [];
+    newBlog.tags = tags;
+    newBlog.save((err, result) => {
+        if (err) {
+            logger.error(err,'BlogController:createBlog',10);
+            let apiResponse = response.generate(true,'Error Occured',500,null);
+            res.send(apiResponse);
+        } else {
+            logger.info('Success In Blog Creation','BlogController:createBlog',1);
+            let apiResponse = response.generate(false,'Success In Blog Creation',200,result);
+            res.send(apiResponse);
+        }
+    })
+}//End createBlog
+
+let editBlog = (req, res) => {
+    let options = req.body;
+    BlogModel.update({ 'blogId': req.params.blogId }, options, { multi: true })//In the update function entire body parameters are passed which may be ineffecient some times
+        .exec((err, result) => {
+            if (err) {
+                logger.error(err,'BlogController:editBlog',8);
+                let apiResponse = response.generate(true,'Error Occured',500,null);
+                res.send(apiResponse);
+            } else if (check.isEmpty(result)) {
+                logger.info('No Blog Found','BlogController:editBlog',7);
+                let apiResponse = response.generate(true,'No Blog Found',404,null);
+                res.send(apiResponse);
+            } else {
+                logger.info('Blog Edited Successfully','BlogController:editBlog',1);
+                let apiResponse = response.generate(false,'Blog Edited Successfully',200,result);
+                res.send(apiResponse);
+            }
+        })
+}//End editBlog
+
+let increaseBlogView = (req,res)=>{
+    BlogModel.find({'blogId':req.params.blogId}, (err,result) => {
+        if(err){
+            logger.error(err,'BlogController:increaseBlogView',10);
+            let apiResponse = response.generate(true,'Error Occured',500,null);
+            res.send(apiResponse);
+        } else if(check.isEmpty(result)){
+            logger.info('Blog Not Found','BlogController:increaseBlogView',5);
+            let apiResponse = response.generate(true,'Blog Not Found',404,null);
+            res.send(apiResponse);
+        }else {
+            result.view += 1;
+            result.save((err,result)=>{
+                if(err){
+                    logger.error('Error occured while saving the blog','BlogController:increaseBlogView',7);
+                    let apiResponse = response.generate(true,'Error Occured While Saving The Blog',500,null);
+                    res.send(apiResponse);
+                }else{
+                    logger.info('Blog Updated Successfully','BlogController:increaseBlogView',1);
+                    let apiResponse = response.generate(false,'Blog Updated Successfully',200,result);
+                    res.send(apiResponse);
+                }
+            });//End result
+        }
+    })
+}//End increaseBlogView
+
+let deleteBlog = (req,res)=>{
+    BlogModel.remove({'blogId':req.params.blogId},(err,result)=>{
+        if(err){
+            logger.error(err,'BlogController:deleteBlog',8);
+            let apiResponse = response.generate(true,'Error Occured',500,null);
+            res.send(apiResponse);
+        }else if(check.isEmpty(result)){
+            logger.info('Blog Not Found','BlogController:deleteBlog',3);
+            let apiResponse = response.generate(true,'Blog Not Found',404,null);
+            res.send(apiResponse);
+        }else{
+            logger.info('Blog Deleted Successfully','BlogController:deleteBlog',1);
+            let apiResponse = response.generate(false,'Blog Deleted Successfully',200,result);
+            res.send(apiResponse);
+        }
+    })
+}//End deleteBlog
+
+
+
+module.exports = {
+    getAllBlog: getAllBlog,
+    viewByBlogId: viewByBlogId,
+    viewByAuthor: viewByAuthor,
+    viewByCategory: viewByCategory,
+    createBlog: createBlog,
+    editBlog: editBlog,
+    increaseBlogView:increaseBlogView,
+    deleteBlog:deleteBlog
+}
