@@ -211,7 +211,7 @@ let editBlog = (req,res)=>{
 
 //editBlog using update function
 let editBlog = (req,res)=>{
-    if(!chech.isEmpty(req.params.blogId)){
+    if(!check.isEmpty(req.params.blogId)){
         let options = req.body;
         BlogModel.update({'blogId':req.params.blogId},options,{multi:true},(err,result)=>{
             if(err){
